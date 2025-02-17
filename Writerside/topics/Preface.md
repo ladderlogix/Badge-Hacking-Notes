@@ -6,13 +6,17 @@ This is a mashup of both 2024 and 2025 badge hacking while the ideas and process
 
 # Table of contents
 
-- [Setup](Setup.md)
 - [About Us](About-Us.md)
+- [Setup](Setup.md)
 - [Analyze Dump](Analyzing-Flash-Dump.md)
   - [Connect to MQTT](Connecting-To-MQTT.md)
 - [2024 Deadwood](Flags.md)
 - [2025 Mile High](2025-Mile-High-Flags.md)
+  - [Charger Fix](Charger-Fix.md)
+  - [Other Random Things about this](Other-Random-Things-about-this-bade.md)
 - [Further Reading](Further-Reading.md)
+- [Custom Firmware](Custom-Firware.md)
+  - [AddingReset](AddingReset.md)
 - [Extra](Extra.md)
   - [StringsSquared](StringsSquared.md)
   - [Editing NVS Data](Editing-NVS-Data.md)
