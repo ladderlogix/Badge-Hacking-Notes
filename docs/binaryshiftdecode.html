@@ -1,0 +1,130 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="dracula" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="robots" content="noindex"><meta name="built-on" content="2025-02-17T16:47:04.9448508"><title>binaryShiftDecode | Badge Hacking WriteUp</title><script type="application/json" id="virtual-toc-data">[{"id":"code","level":0,"title":"Code","anchor":"#code"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b575/app.css" rel="stylesheet"><meta name="msapplication-TileColor" content="#000000"><link rel="apple-touch-icon" sizes="180x180" href="https://jetbrains.com/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://jetbrains.com/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://jetbrains.com/favicon-16x16.png"><meta name="msapplication-TileImage" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-144x144.png"><meta name="msapplication-square70x70logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-70x70.png"><meta name="msapplication-square150x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-150x150.png"><meta name="msapplication-wide310x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x150.png"><meta name="msapplication-square310x310logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x310.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="binaryShiftDecode | Badge Hacking WriteUp"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="Badge Hacking WriteUp Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="writerside-documentation/binaryshiftdecode.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="binaryShiftDecode | Badge Hacking WriteUp"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "writerside-documentation/binaryshiftdecode.html#webpage",
+    "url": "writerside-documentation/binaryshiftdecode.html",
+    "name": "binaryShiftDecode | Badge Hacking WriteUp",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "writerside-documentation/#website",
+    "url": "writerside-documentation/",
+    "name": "Badge Hacking WriteUp Help"
+}</script><!-- End Schema.org --></head><body data-id="binaryShiftDecode" data-main-title="binaryShiftDecode" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="Extra.md|Extra"><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>Badge Hacking WriteUp  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="binaryShiftDecode" id="binaryShiftDecode.md">binaryShiftDecode</h1><p id="h9ivcn_3">Tool to help read binary but if the data order is moved around. This was a tool I made in preparation for Mile High.</p><p id="h9ivcn_4">Takes in a file with binary a data on each line ie</p><div class="code-block" data-lang="none">
+0011
+1011
+0110
+</div><p id="h9ivcn_6">and will try to hex decode</p><div class="code-block" data-lang="bash">
+python main.py
+</div><p id="h9ivcn_8">a gui will pop up where you can pick a file</p><section class="chapter"><div class="collapse"><div class="collapse__title"><h2 id="code" data-toc="code">Code</h2></div><div class="collapse__content"><div class="code-block" data-lang="python">
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+# Shift a binary string to the right
+def shift_binary(binary):
+    return binary[-1] + binary[:-1]
+
+# Decode binary string to ASCII character
+def decode_binary(binary):
+    try:
+        return chr(int(binary, 2))
+    except ValueError:
+        return &quot;?&quot;
+
+# Load binary data from a file
+def load_binary_data():
+    &quot;&quot;&quot;Prompt the user to select a file and load binary data.&quot;&quot;&quot;
+    global binary_data, current_data
+
+    # Open file dialog to select a file
+    file_path = filedialog.askopenfilename(
+        title=&quot;Select a file&quot;,
+        filetypes=((&quot;Text Files&quot;, &quot;*.txt&quot;), (&quot;All Files&quot;, &quot;*.*&quot;))
+    )
+    
+    if not file_path:
+        return  # User canceled the file selection
+
+    try:
+        with open(file_path, &quot;r&quot;) as file:
+            binary_data = [line.strip() for line in file.readlines() if line.strip()]
+        
+        # Validate binary strings
+        for binary in binary_data:
+            if len(binary) != 8 or not set(binary).issubset({'0', '1'}):
+                raise ValueError(f&quot;Invalid binary string: {binary}&quot;)
+        
+        # Set initial data and update the display
+        current_data = binary_data[:]
+        update_display()
+    except Exception as e:
+        messagebox.showerror(&quot;Error&quot;, f&quot;Failed to load data: {e}&quot;)
+        binary_data = []
+        current_data = []
+
+# Update the display
+def update_display():
+    &quot;&quot;&quot;Update the binary strings and their decoded characters displayed in the GUI.&quot;&quot;&quot;
+    for i in range(len(binary_labels)):
+        if i &lt; len(current_data):
+            binary = current_data[i]
+            binary_labels[i].config(text=binary)
+            decoded_labels[i].config(text=decode_binary(binary))
+        else:
+            binary_labels[i].config(text=&quot;&quot;)  # Clear unused labels
+            decoded_labels[i].config(text=&quot;&quot;)
+
+# Shift binary strings to the right and update the display
+def next_page():
+    &quot;&quot;&quot;Shift all binary strings to the right.&quot;&quot;&quot;
+    global current_data
+    current_data = [shift_binary(binary) for binary in current_data]
+    update_display()
+
+# Initialize the GUI
+root = tk.Tk()
+root.title(&quot;Binary Viewer with Shifts and Decoding&quot;)
+
+# Initialize variables
+binary_data = []
+current_data = []
+
+# Frame for binary strings and decoded characters
+frame = tk.Frame(root)
+frame.pack(pady=10)
+
+# Create labels for binary strings and decoded characters
+binary_labels = []
+decoded_labels = []
+rows_to_display = 10  # Adjust based on how many rows you want visible at once
+
+for _ in range(rows_to_display):
+    row = tk.Frame(frame)
+    row.pack(side=tk.TOP, fill=tk.X, pady=2)
+    
+    binary_label = tk.Label(row, width=15, text=&quot;&quot;, anchor=&quot;w&quot;)
+    binary_label.pack(side=tk.LEFT, padx=5)
+    binary_labels.append(binary_label)
+    
+    decoded_label = tk.Label(row, width=5, text=&quot;&quot;, anchor=&quot;w&quot;)
+    decoded_label.pack(side=tk.LEFT, padx=5)
+    decoded_labels.append(decoded_label)
+
+# Buttons for file loading and shifting
+button_frame = tk.Frame(root)
+button_frame.pack(pady=5)
+
+load_button = tk.Button(button_frame, text=&quot;Load File&quot;, command=load_binary_data)
+load_button.pack(side=tk.LEFT, padx=5)
+
+next_button = tk.Button(button_frame, text=&quot;Next&quot;, command=next_page)
+next_button.pack(side=tk.LEFT, padx=5)
+
+# Start the GUI event loop
+root.mainloop()
+
+
+</div></div></div></section><div class="last-modified">Last modified: 17 February 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="editing-nvs-data.html" class="navigation-links__prev">Editing NVS Data</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b575/app.js"></script></body></html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="dracula" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="robots" content="noindex"><meta name="built-on" content="2025-02-17T16:47:04.9438473"><title>StringsSquared | Badge Hacking WriteUp</title><script type="application/json" id="virtual-toc-data">[{"id":"code","level":0,"title":"Code","anchor":"#code"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b575/app.css" rel="stylesheet"><meta name="msapplication-TileColor" content="#000000"><link rel="apple-touch-icon" sizes="180x180" href="https://jetbrains.com/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://jetbrains.com/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://jetbrains.com/favicon-16x16.png"><meta name="msapplication-TileImage" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-144x144.png"><meta name="msapplication-square70x70logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-70x70.png"><meta name="msapplication-square150x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-150x150.png"><meta name="msapplication-wide310x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x150.png"><meta name="msapplication-square310x310logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x310.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="StringsSquared | Badge Hacking WriteUp"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="Badge Hacking WriteUp Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="writerside-documentation/stringssquared.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="StringsSquared | Badge Hacking WriteUp"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "writerside-documentation/stringssquared.html#webpage",
+    "url": "writerside-documentation/stringssquared.html",
+    "name": "StringsSquared | Badge Hacking WriteUp",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "writerside-documentation/#website",
+    "url": "writerside-documentation/",
+    "name": "Badge Hacking WriteUp Help"
+}</script><!-- End Schema.org --></head><body data-id="StringsSquared" data-main-title="StringsSquared" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="Extra.md|Extra"><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>Badge Hacking WriteUp  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="StringsSquared" id="StringsSquared.md">StringsSquared</h1><p id="c0vqbj_3">Decodes hex strings from memory</p><div class="code-block" data-lang="bash">
+python stringsSquared.py mem_dump.bin
+</div><section class="chapter"><div class="collapse"><div class="collapse__title"><h2 id="code" data-toc="code">Code</h2></div><div class="collapse__content"><div class="code-block" data-lang="python">
+import subprocess
+import argparse
+
+def strings_and_hex_decode(file_path):
+    try:
+        # Step 1: Run `strings` on the file and capture the output
+        result = subprocess.run(['strings', file_path], stdout=subprocess.PIPE, text=True)
+        output = result.stdout
+
+        # Step 2: Process each line of the output
+        for line in output.splitlines():
+            # Remove whitespace and check if it's a valid hex string
+            clean_line = line.strip()
+            try:
+                # Attempt to decode as hex
+                decoded_line = bytes.fromhex(clean_line).decode('utf-8')
+                print(f&quot;Original: {clean_line} | Decoded: {decoded_line}&quot;)
+            except ValueError:
+                # Skip lines that are not valid hex
+                print(f&quot;Not hex: {clean_line}&quot;)
+    except Exception as e:
+        print(f&quot;Error: {e}&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    # Argument parsing
+    parser = argparse.ArgumentParser(description=&quot;Extract strings from a file and decode hex lines.&quot;)
+    parser.add_argument(&quot;file&quot;, help=&quot;Path to the file to process&quot;)
+    args = parser.parse_args()
+
+    # Call the function with the provided file path
+    strings_and_hex_decode(args.file)
+</div></div></div></section><div class="last-modified">Last modified: 17 February 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="extra.html" class="navigation-links__prev">Extra</a><a href="editing-nvs-data.html" class="navigation-links__next">Editing NVS Data</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b575/app.js"></script></body></html>
